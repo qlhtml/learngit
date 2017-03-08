@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title>全球快讯筛选</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/filtrate.css">
+</head>
+<body>
+    <div class="menu-common menu-list clearfix">
+        <div class="menu-title"> 地区</div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="9">
+            <span class="text">中国</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="10">
+            <span class="text">美国</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="11">
+            <span class="text">欧元区</span>
+        </div>
+        <div class="menu-checkbox menu-speci">
+            <input type="checkbox" name="cid[]" value="13">
+            <span class="text">英国</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="12">
+            <span class="text">日本</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="15">
+            <span class="text">加拿大</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="14">
+            <span class="text">澳洲</span>
+        </div>
+        <div class="menu-checkbox menu-speci">
+            <input type="checkbox" name="cid[]" value="16">
+            <span class="text">瑞士</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="17">
+            <span class="text">其他地区</span>
+        </div>
+    </div>
+    <div class="menu-list clearfix menu-common">
+        <div class="menu-title">机构</div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="5">
+            <span class="text">央行</span>
+        </div>
+    </div>
+    <div class="menu-list clearfix menu-common">
+        <div class="menu-title">资产类别:</div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="1">
+            <span class="text">外汇</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="2">
+            <span class="text">股市</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="cid[]" value="4">
+            <span class="text">债券</span>
+        </div>
+        <div class="menu-checkbox menu-speci">
+            <input type="checkbox" name="cid[]" value="3">
+            <span class="text">商品</span>
+        </div>
+    </div>
+    <div class="menu-list clearfix menu-important">
+        <div class="menu-title">重要性</div>
+        <div class="menu-checkbox menu-te checked">
+            <input type="checkbox" value="">
+            <span class="text">全部</span>
+        </div>
+        <div class="menu-checkbox menu-te">
+            <input type="checkbox" name="importance" value="2,3">
+            <span class="text">只看重要的</span>
+        </div>
+    </div>
+    <div class="menu-list clearfix menu-type">
+        <div class="menu-title">信息类型</div>
+        <div class="menu-checkbox checked">
+            <input type="checkbox" name="" value="">
+            <span class="text">全部</span>
+        </div>
+        <div class="menu-checkbox ">
+            <input type="checkbox" name="type" value="news">
+            <span class="text">新闻</span>
+        </div>
+        <div class="menu-checkbox">
+            <input type="checkbox" name="type" value="data">
+            <span class="text">数据</span>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="finish">
+            完成
+        </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/fastclick.js"></script>
+    <script src="js/filtreate.js"></script>
+</body>
+</html>

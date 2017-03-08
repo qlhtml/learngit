@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title>资讯</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <div class="header"></div>
+    <div class="content-wrapper" id="page-livenews">
+        <!--tab 切换-->
+        <div class="tab-headers clearfix">
+            <div class="tab-item active" id="tab-xgb">A股</div>
+            <div class="tab-item " id="tab-live">全球
+                <img class="shaixuan " src="img/shuaxuan-t.png">
+            </div>
+        </div>
+        <!--A股直播-->
+        <div id="xgb-content" class="tab-content active">
+            <ul id="xgb-list">
+            </ul>
+            <div class="pull-more">数据加载中...</div>
+
+        </div>
+        <!--全球直播-->
+        <div id="livenews-content" class="tab-content ">
+            <ul id="event-list">
+            </ul>
+            <div class="pull-more">数据加载中...</div>
+        </div>
+        <!--toast-->
+        <div id="toast" style="display:none;" >
+            <div class="weui_mask_transparent"></div>
+            <div class="weui_toast">
+                <p class="weui_toast_content" id="toast-content"></p >
+            </div>
+        </div>
+        <script type="text/html" id="event-tpl">
+            {{#each events}}
+            {{#if date}}
+            <li class="event-date date-item" data-date="{{date}}">{{monthWeek}}</li>
+            {{else}}
+            <li class="event-item {{newEventClass}}" data-key="{{id}}"  data-created-at="{{createdAt}}" data-updated-at="{{updatedAt}}">
+
+                <div class="created-time">
+                    <div>{{hourMinute}}</div>
+                    <img src="img/circle.png" alt="" class="circle-img">
+                </div>
+
+                <div class="event-content level-{{importance}}">
+                    <div class="text-content">
+                        <div class="text-wrap">
+                            {{{content}}}
+                        </div>
+                    </div>
+                    <div class="stock">
+                        {{#if stocks}}
+                        {{#each stocks}}
+                        <a class="stock-item {{className}}" href="{{stockLink}}">{{name}}{{rate}}%</a>
+                        {{/each}}
+                        {{/if}}
+                    </div>
+                    <div class="img-content">
+                        {{{imgContent}}}
+                    </div>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+        </script>
+        <script type="text/html" id="xgb-tpl">
+        {{#each xgb}}
+        {{#if date}}
+        <li class="event-date date-item" data-date="{{date}}">{{monthWeek}}</li>
+        {{else}}
+        <li class="event-item " data-key="{{id}}"  data-created-at="{{createdAt}}" data-updated-at="{{updatedAt}}" data-day="{{monthDay}}" >
+            <div class="created-time">
+                <div>{{hourMinute}}</div>
+                 <img src="img/circle.png" alt="" class="circle-img">
+            </div>
+
+            <div class="event-content ">
+                <div class="text-content" >
+                    <div class="text-wrap">
+                        {{content}}
+                    </div>
+                </div>
+                <div class="stock">
+                    {{#if from}}
+                        {{#if stocks}}
+                        {{#each stocks}}
+                        <a class="stock-item {{className}}" disabled="true">
+                            <span class="icon {{className}}"></span>{{Name}}   {{rate}}%
+                        </a>
+                        {{/each}}
+                        {{/if}}
+                    {{else}}
+                        {{#if stocks}}
+                        {{#each stocks}}
+                        <a class="stock-item" href="{{link}}">
+                            {{Name}}
+                        </a>
+                        {{/each}}
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
+        </li>
+        {{/if}}
+        {{/each}}
+        </script>
+    </div>
+    <div class="disclaimer" >
+        <div class="mask"></div>
+        <div class="disclaimer-wrap">
+            <h2 class="disclaimer-title">免责申明</h2>
+            <p class="disclaimer-detail">本内容来自第三方资讯信息，不构成投资建议，投资者应自主进行投资决策，自行承担风险</p>
+            <div class="disclaimer-btn">我知道了</div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){
+            i['GoogleAnalyticsObject'] = r;
+            i[r]=i[r]||function(){
+                        (i[r].q=i[r].q||[]).push(arguments)
+                    },i[r].l = 1*new Date();
+            function loadGoogleAPI(){
+                a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                setTimeout(function(){
+                    m.parentNode.insertBefore(a,m)
+                    ga('create', 'UA-19303398-23', 'auto');
+                    ga('send', 'pageview');
+                },50);
+            }
+            if (window.addEventListener) {
+                window.addEventListener("load", loadGoogleAPI, false);
+            }
+            else if (window.attachEvent) {
+                window.attachEvent("onload", loadGoogleAPI);
+            }
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga')
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/handlebars-v3.0.1.js"></script>
+    <script src="js/fastclick.js"></script>
+    <script src="js/lightbox.js"></script>
+    <script src="js/parseAssets.js"></script>
+    <script src="./xgbmanager.js"></script>
+    <script src="./globalManager.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
