@@ -625,7 +625,7 @@ ul li:nth-of-type(2) .event-content .text-content {
     color: #999;
 }
 
-#fixed-date-container{
+#fixed-date-container, #fixed-live-container{
     position: fixed;
     top:52px;
     left:0;

@@ -1,6 +1,5 @@
 //修改dataCommon
 function Globalmanager(options) {
-	this.fromStr = options.fromStr;
 	this.api = options.api;
 	this.page = 1;
 	this.firstLoad = options.firstLoad || true;
@@ -9,28 +8,26 @@ function Globalmanager(options) {
 	this.ajaxTimeout = options.ajaxTimeout || 5000;
 	this.stop = false;
 	this.textCompareHeight = options.textCompareHeight || 48;
-	this.$pullMoreDom = $('pull-more');
 	this.globalMinUpdated = '';
 	this.appendData = [];
 	this.insertData = []; //
 	this.insertBeforeData = [];
 	this.insertAfterData = [];
-	this.dateArr = [];
-	this.index = '';
-	this.filtrate = options.filtrate;
 	this.topDateArr = [];
+	this.index = '';
 	this.eventTpl = options.eventTpl;
 }
 Globalmanager.prototype.init = function(){
 	var self = this;
-	self.loadpage();
+	this.loadpage();
 	self.addFixedDate();
-	$(window).on('scroll',function(){self.scrollFunc()})
+	$(window).on('scroll',function(){self.scrollFunc()});
 }
 //Loadpage
 Globalmanager.prototype.loadpage = function(){
 	var self = this;
 	self.isLoading = true;
+	if( self.stop ) return;
 	$.ajax({
 		url: self.api.live + self.filtrate,
 		data: {
@@ -38,7 +35,7 @@ Globalmanager.prototype.loadpage = function(){
 		},
 		dataType:'JSONP',
 		success:function(res){
-			console.log('loadpage is true');
+			// console.log('loadpage is true');
 			self.isLoading = false;
 			if(res.results.length > 0){
 				//Dom操作
@@ -46,7 +43,6 @@ Globalmanager.prototype.loadpage = function(){
 				self.appendDomFunc();
 				self.mianze();
 				self.page++;
-				$('.pull-more').text('上拉加载更多')
 				if(self.firstLoad){
 					self.firstLoad = false;
 					self.realTime()
@@ -54,9 +50,9 @@ Globalmanager.prototype.loadpage = function(){
 			}
 		},
 		error: function(){
-			console.log('loadpage is error');
+			// console.log('loadpage is error');
 			setTimeout(function(){
-				self.loadpage(self.firstLoad)
+				self.loadpage()
 			},2000)
 		}
 	})
@@ -69,12 +65,12 @@ Globalmanager.prototype.realTime = function(){
 	$.ajax({
 		url: self.api.real + self.filtrate,
 		data: {
-			min_updated:(+globalMinUpdated) + 1,
+			min_updated:(+self.globalMinUpdated) + 1,
 		},
 		dataType: 'JSONP',
 		timeout: self.ajaxTimeout,
 		success: function(res){
-			console.log('realtime is success')
+			// console.log('realtime is success')
 			if(res.results.length > 0) {
 				//Dom操作
 				self.insertDataFunc(res.results);
@@ -84,7 +80,7 @@ Globalmanager.prototype.realTime = function(){
 			self.realTimeloop(nowTime);
 		},
 		error: function(){
-			console.log('realtime is error')
+			// console.log('realtime is error')
 			self.realTimeloop(nowTime);
 		}
 	})
@@ -131,19 +127,17 @@ Globalmanager.prototype.appendDataFunc = function(data){
 }
 //appendDom
 Globalmanager.prototype.appendDomFunc = function(){
-	var html = this.eventTpl({ events: this.appendData});
-	var $html = $(html);
 	var self = this;
+	var html = self.eventTpl({ events: self.appendData});
+	var $html = $(html);
 	$('#event-list').append($html);
 	$html.find('.text-content .text-wrap').each(function(index,item){
-		// style = $(item).height();
 		var style = window.getComputedStyle(item,null);
 	    if(parseInt(style.height)>self.textCompareHeight){
 	        $(item).closest('.text-content').next().append('<div class="display-all-btn">展开</div>')
 	    }
     })
     self.addDateIndex();
-    console.log(self.topDateArr)
 }
 //insertData 区分为after 和 before
 Globalmanager.prototype.insertDataFunc = function(data){
@@ -211,7 +205,6 @@ Globalmanager.prototype.afterOrBeforDom = function(){
 		html = self.eventTpl({ events: self.insertAfterData});
 		$html = $(html);
 		$html.insertAfter($firstD);
-		self.addDateIndex();
 		$html.find('.text-content .text-wrap').each(function(index,item){
 	        var style = window.getComputedStyle(item,null);
 	        if(parseInt(style.height) > self.textCompareHeight) {
@@ -223,8 +216,6 @@ Globalmanager.prototype.afterOrBeforDom = function(){
 		html = self.eventTpl({ events: self.insertBeforeData});
 		$html = $(html);
 		$html.insertBefore($firstD);
-		self.addDateIndex();
-		console.log(self.topDateArr)
 		self.index++
 		$html.find('.text-content .text-wrap').each(function(indexd,item){
 	        var style = window.getComputedStyle(item,null);
@@ -233,6 +224,7 @@ Globalmanager.prototype.afterOrBeforDom = function(){
 	        }
 	    })
 	}
+	self.addDateIndex();
 }
 //addDateIndex
 Globalmanager.prototype.addDateIndex = function(){
@@ -242,14 +234,14 @@ Globalmanager.prototype.addDateIndex = function(){
         $(dateItem).attr('id','');
         $(dateItem).attr('id','event-date-' + index);
         var dateItemOffsetTop = $(dateItem).offset().top;
-        console.log(dateItemOffsetTop)
         self.topDateArr.push(dateItemOffsetTop)
     });
+	console.log(self.topDateArr)
 }
 //add fix-date
 Globalmanager.prototype.addFixedDate = function(){
     var self = this;
-    $ele = "<div id='fixed-date-container'><div class='event-date fix-date'></div>";
+    $ele = "<div id='fixed-live-container'><div class='event-date fix-date'></div>";
     $('#livenews-content').append($ele);
 }
 //dataCommonFunc
@@ -290,7 +282,7 @@ Globalmanager.prototype.dataCommonFunc = function(data,initializeDay,dataType){
 				self.globalMinUpdated = updatedAt;
 			}
 		}else {
-			globalMinUpdated = updatedAt
+			self.globalMinUpdated = updatedAt
 		}
 	})
 }
@@ -307,49 +299,38 @@ Globalmanager.prototype.mianze = function() {
 }
 //sroll
 Globalmanager.prototype.scrollFunc = function(){
-	var self = this;
-    var winScrollTop = $(window).scrollTop();
-    if (winScrollTop + $(window).height() >= $(document).height()-10) {
-        if(self.isLoading) return
-        $('.pull-more').text('加载中...');
-        self.loadpage(self.firstLoad);
-    }
-    winScrollTop > 0 ? $('#fixed-date-container').show() : $('#fixed-date-container').hide();
-    var topDateArr = self.topDateArr;
+	if( this.stop ) return;
+	var winScrollTop = $(window).scrollTop();
+	if (winScrollTop + $(window).height() >= $(document).height()-10) {
+		if(this.isLoading) return
+		$('#livenews-content .pull-more').text('加载中...');
+		this.loadpage();
+	}
+    if( winScrollTop > 0 ) {
+		$('#fixed-live-container').show()
+	} else{
+		$('#fixed-live-container').hide();
+	}
+	var topDateArr  = this.topDateArr;
     if(winScrollTop >= 0) {
-        if(topDateArr.length === 1 ){
-            self.index = 0
+        if( topDateArr.length === 1 ){
+            this.index = 0
         } else {
-            if(winScrollTop + self.fixTop >= topDateArr[topDateArr.length - 1])  self.index = topDateArr.length - 1;
-            if(winScrollTop + self.fixTop < topDateArr[self.index]) {
-                self.index = self.index -1
-            } else if ( winScrollTop + self.fixTop < topDateArr[self.index + 1]){
-                self.index = self.index
+            if(winScrollTop + this.fixTop >= topDateArr[topDateArr.length - 1])  this.index = topDateArr.length - 1;
+            if(winScrollTop + this.fixTop < topDateArr[this.index]) {
+				this.index = this.index -1
+            } else if ( winScrollTop + this.fixTop < topDateArr[this.index + 1]){
+				this.index = this.index
             } else {
-                self.index + 1
+				this.index + 1
             }
         }
     }
-    var text = $('#event-date-' + self.index).text();
+    var text = $('#event-date-' + this.index).text();
     var reg = /免责声明/;
     var newstr = '';
     var newtext = text.replace(reg,newstr)
-    $('#fixed-date-container .fix-date').text(newtext)
-}
-// stopFunc
-Globalmanager.prototype.stopFunc = function(){
-	var self = this;
-	self.stop = true;
-	$(window).off('srcoll',self.scrollFunc);
-}
-//
-Globalmanager.prototype.restartFunc = function(){
-	var self = this;
-	if( self.stop ) {
-		self.stop = false;
-		self.realTimeloop();
-	}
-	$(window).on('scroll',self.scrollFunc)
+    $('#fixed-live-container .fix-date').text(newtext)
 }
 //
 function processImage($images){

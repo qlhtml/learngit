@@ -30,6 +30,7 @@ Xgbmanager.prototype.init = function(){
 Xgbmanager.prototype.loadPage = function(){
     var self = this;
     self.isLoading = true;
+    if( self.stop ) return;
     $.ajax({
         url:this.api,
         data: {
@@ -44,6 +45,7 @@ Xgbmanager.prototype.loadPage = function(){
             if( res.NewMsgs.length > 0){
                 self.appendDataFunc(res.NewMsgs);
                 self.tailMark = res.TailMark;
+                // $('#xgb-content .pull-more').text('上拉加载更多')
                 if( self.firstLoad ) {
                     self.firstLoad = false;
                     self.headMark = res.HeadMark;
@@ -100,15 +102,12 @@ Xgbmanager.prototype.realTimeLoopFunc = function(nowTime){
         var timeGap = self.ajaxTimeout - ( newTime - nowTime )
         if( timeGap > 0 ) {
             setTimeout(function(){
-                if(self.stop) return
                 self.realTime();
             },timeGap)
         } else {
-            if(self.stop) return
             self.realTime();
         }
     }else {
-        if(self.stop) return
         self.realTime();
     }
 }
@@ -147,6 +146,7 @@ Xgbmanager.prototype.appendDomFunc = function() {
     var $html = $(html);
     var self = this;
     $('#xgb-list').append($html);
+    $('#xgb-content .pull-more').text('上拉加载更多')
     $html.find('.text-content .text-wrap').each(function(index,item){
         var style = window.getComputedStyle(item,null);
         if(parseInt(style.height) > self.textCompareHeight) {
@@ -240,10 +240,10 @@ Xgbmanager.prototype.updateOrDeletedDomFunc = function(data,type){
         if($eventItemDom.length > 0) {
             if(type === 'update') {
                 $eventItemDom.find('.text-wrap').html('【' + eventItem.Title + '】' + eventItem.Summary);
-                console.log('update is success!');
+                // console.log('update is success!');
             }else {
                 $eventItemDom.remove();
-                console.log('delete is success!')
+                // console.log('delete is success!')
             }
         }
     })
@@ -293,7 +293,7 @@ Xgbmanager.prototype.getStocksDataAndPutIn = function(data,callback,callArgu1,ca
             }
         },
         error: function(){
-            console.log('The Api of getStocks is error')
+            // console.log('The Api of getStocks is error')
         }
     })
 }
@@ -356,28 +356,31 @@ Xgbmanager.prototype.mianze = function(){
     }
 }
 //scrollFunc
-Xgbmanager.prototype.scrollFunc = function(){
+Xgbmanager.prototype.scrollFunc = function() {
+    if (this.stop) return;
+    if (this.firstLoad) return;
     var self = this;
     var winScrollTop = $(window).scrollTop();
-    if (winScrollTop + $(window).height() >= $(document).height()-10) {
-        if(self.isLoading) return
-        $('.pull-more').text('加载中...');
+    if (winScrollTop + $(window).height() >= $(document).height() - 10) {
+        if (self.isLoading) return
+        $('#xgb-content .pull-more').text('加载中...');
         self.loadPage(self.firstLoad);
     }
-    if(winScrollTop > 0) {
+    if (winScrollTop > 0) {
         $('#fixed-date-container').show()
-    }else{
+    } else {
         $('#fixed-date-container').hide()
     }
     var topDateArr = self.topDateArr;
-    if(winScrollTop >= 0) {
-        if(topDateArr.length === 1 ){
+    if (winScrollTop >= 0) {
+        if (topDateArr.length === 1) {
             self.index = 0
+            // console.log(123)
         } else {
-            if(winScrollTop + self.fixTop >= topDateArr[topDateArr.length - 1])  self.index = topDateArr.length - 1;
-            if(winScrollTop + self.fixTop < topDateArr[self.index]) {
-                self.index = self.index -1
-            } else if ( winScrollTop + self.fixTop < topDateArr[self.index + 1]){
+            if (winScrollTop + self.fixTop >= topDateArr[topDateArr.length - 1])  self.index = topDateArr.length - 1;
+            if (winScrollTop + self.fixTop < topDateArr[self.index]) {
+                self.index = self.index - 1
+            } else if (winScrollTop + self.fixTop < topDateArr[self.index + 1]) {
                 self.index = self.index
             } else {
                 self.index + 1
@@ -387,23 +390,8 @@ Xgbmanager.prototype.scrollFunc = function(){
     var text = $('#xgb-date-' + self.index).text();
     var reg = /免责声明/;
     var newstr = '';
-    var newtext = text.replace(reg,newstr)
+    var newtext = text.replace(reg, newstr)
     $('#fixed-date-container .fix-date').text(newtext)
-}
-//XgbStop
-Xgbmanager.prototype.stopFunc = function(){
-    var self = this;
-    self.stop = true;
-    $(window).off('scroll',self.scrollFunc)
-}
-//restart
-Xgbmanager.prototype.restartFunc = function(){
-    var self = this;
-    if( self.stop ) {
-        self.stop = false;
-        self.realTimeLoopFunc()
-    }
-    $(window).on('scroll',self.scrollFunc)
 }
 //
 Xgbmanager.prototype.addDateIndex = function(){
